@@ -27,6 +27,8 @@
                                         solo-inverted
                                         hide-details
                                         :items="countries"
+                                        item-text="name"
+                                        item-value="id"
                                         prepend-inner-icon="mdi-earth"
                                         label="Pais"
                                     ></v-select>
@@ -39,10 +41,13 @@
                                         solo-inverted
                                         hide-details
                                         :items="universities"
+                                        item-text="name"
+                                        item-value="id"
                                         prepend-inner-icon="mdi-school"
                                         label="Universidad"
                                     ></v-select>
                                 </v-col>
+
                                 <v-col>
                                     <v-select
                                         v-model="agreementType"
@@ -50,22 +55,25 @@
                                         solo-inverted
                                         hide-details
                                         :items="agreementTypes"
+                                        item-text="name"
+                                        item-value="id"
                                         prepend-inner-icon="mdi-handshake"
                                         label="Tipo de convenio"
                                     ></v-select>
                                 </v-col>
                                 <v-col>
                                     <v-select
-                                        v-model="status"
+                                        v-model="agreements"
                                         flat
                                         solo-inverted
                                         hide-details
-                                        :items="statuses"
+                                        :items="agreements"
+                                        item-text="name"
+                                        item-value="id"
                                         prepend-inner-icon="mdi-list-status"
                                         label="Estado"
                                     ></v-select>
                                 </v-col>
-
                                 <template v-if="$vuetify.breakpoint.mdAndUp">
                                     <v-spacer></v-spacer>
                                     <v-col>
@@ -238,6 +246,7 @@ import Agreement from "@/models/Agreement";
 import GeneralLayout from "@/Layouts/GeneralLayout";
 import Loading from "@/Pages/Agreements/Components/Loading";
 import AgreementCardItem from "@/Pages/Agreements/Components/AgreementCardItem";
+import University from "@/models/University";
 
 export default {
     name: "Search",
@@ -259,18 +268,25 @@ export default {
             //For filters
             countries: [],
             country: '',
-            universities: [],
+            universities: [ ],
             university: '',
             agreementTypes: [],
-            agreementType: '',
+            agreementType: ' ',
             statuses: [],
             status: '',
         }
     },
     async created() {
+        //Todo:se llama el metodo
+
         await this.getAgreements();
+        await this.getuniversities();
+        await this.getCountries();
+        await this.getstatus();
+        await this.getAgreementTypes();
         this.setSteps();
     },
+
 
     methods: {
         getTitle(title) {
@@ -301,10 +317,34 @@ export default {
             this.isLoading = false;
         },
 
+            getCountries:async function (){
+            let request = await axios.get(route('api.countries.index'));
+            this.countries= request.data;
+            this.isLoading= false;
+        },
+
+            getuniversities : async function (){
+            let request = await axios.get(route('api.universities.index'));
+            this.universities= request.data;
+            this.isLoading=false ;
+        },
+
+            getAgreementTypes: async function(){
+            let request= await axios.get(route('api.agreementTypes.index'));
+            this. agreementTypes=request.data;
+            this.isLoading=false;
+        },
+    //    estado
+            getstatus: async function (){
+            let request = await axios.get(route('api.universities.index'));
+            this.status=request.data;
+            this.isLoading=false;
+        }
     },
     computed: {
         filteredItems() {
             return this.agreements;
+
         },
 
     },
